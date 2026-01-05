@@ -1,0 +1,22 @@
+import java.util.*;
+import java_cup.runtime.*;
+
+terminal BREAK, COMMA, GTSIGN, DGTSIGN;
+terminal Constant COMMAND;
+terminal String ARG, STRINGCONST;
+
+non terminal List<Comm>     commlist;
+non terminal Comm           comm;
+non terminal List<String>   arglist;
+
+// precedence left 
+
+commlist    ::= commlist:cl comm:c          {: cl.add(c); RESULT = cl; :}
+    |                                       {: RESULT = new LinkedList<Comm>(); :}
+    ;
+comm        ::= BREAK                       {: /* nic */ :}
+    | COMMAND:cmd arglist:al BREAK            {: RESULT = new Comm(cmd, al); :}
+    ;
+arglist     ::= arglist:al ARG:argument     {: al.add(argument); RESULT = al; :}
+    |                                       {: RESULT = new LinkedList<String>(); :}
+    ;
