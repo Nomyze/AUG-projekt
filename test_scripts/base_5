@@ -1,0 +1,8 @@
+echo aaa > plik1
+echo bbb >> plik2
+echo ccc >> plik2
+cat plik1
+cat plik2
+wc plik1
+wc plik2
+

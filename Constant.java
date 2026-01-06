@@ -1,1 +1,1 @@
-public enum Constant { ECHO, WC, CAT }
+public enum Constant { ECHO, WC, CAT, GREP }

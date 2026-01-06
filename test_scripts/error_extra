@@ -1,0 +1,5 @@
+cat x > y; cat y
+
+echo "===="
+
+echo abc >y; cat x > y; cat y

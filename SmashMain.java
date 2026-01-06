@@ -12,7 +12,7 @@ class SmashMain {
         } else {
             p = new parser(new ScannerBuffer(new Lexer(new BufferedReader(new InputStreamReader(System.in)), sf)), sf);
         }
-		System.out.println("-> " + p.parse().value);
+		p.parse();
 	}
 }
 

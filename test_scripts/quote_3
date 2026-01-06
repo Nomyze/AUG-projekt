@@ -1,0 +1,4 @@
+echo "Ala
+ma
+
+kota" > plik; cat plik

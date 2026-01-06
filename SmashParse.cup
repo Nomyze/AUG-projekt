@@ -1,22 +1,43 @@
 import java.util.*;
 import java_cup.runtime.*;
 
-terminal BREAK, COMMA, GTSIGN, DGTSIGN;
+terminal BREAK, COMMENT, GTSIGN, DGTSIGN, PIPE;
 terminal Constant COMMAND;
 terminal String ARG, STRINGCONST;
 
-non terminal List<Comm>     commlist;
-non terminal Comm           comm;
+non terminal Program        program;
+non terminal List<Comm>     stmtlist;
+non terminal Comm           comm, stmt;
 non terminal List<String>   arglist;
 
-// precedence left 
+precedence left BREAK;
+precedence left PIPE;
 
-commlist    ::= commlist:cl comm:c          {: cl.add(c); RESULT = cl; :}
+program ::= stmtlist:sl                         {: RESULT = new Program(sl); :}
+    ;
+
+stmtlist    ::= stmt:s
+    | stmtlist:sl BREAK stmt:s    {: sl.add(s); RESULT = sl; :}
     |                                       {: RESULT = new LinkedList<Comm>(); :}
     ;
-comm        ::= BREAK                       {: /* nic */ :}
-    | COMMAND:cmd arglist:al BREAK            {: RESULT = new Comm(cmd, al); :}
+//stmt        ::= BREAK                                       {: /* nic */ :}
+//    | comm:c PIPE stmt:s                    {: RESULT = s; RESULT.setInput(c.doTheThing()); System.out.print(RESULT.doTheThing()); :}
+//    | comm:c BREAK                          {: RESULT = c; System.out.print(RESULT.doTheThing()); :}
+//    | comm:c GTSIGN ARG:a BREAK             {: RESULT = c; c.setMode(0); c.setFile(a); System.out.print(RESULT.doTheThing()); :}
+//    | comm:c DGTSIGN ARG:a BREAK            {: RESULT = c; c.setMode(1); c.setFile(a); System.out.print(RESULT.doTheThing()); :}
+//    | COMMENT                                               {: :}
+//    ;
+stmt        ::= pipeline
+    ;
+pipeline    ::= comm:c
+    | pipeline:p PIPE comm:c
+    ;
+comm        ::= COMMAND:cmd arglist:al redirs     {: RESULT = new Comm(cmd, al); :}
+    | COMMENT                                   {: :}
     ;
 arglist     ::= arglist:al ARG:argument     {: al.add(argument); RESULT = al; :}
     |                                       {: RESULT = new LinkedList<String>(); :}
     ;
+redirs ::=
+    | redirs GTSIGN ARG:a
+    | redirs DGTSIGN ARG:a

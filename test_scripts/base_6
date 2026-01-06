@@ -1,0 +1,2 @@
+echo a>x; echo b>>x; wc x
+wc x>y; wc y

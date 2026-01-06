@@ -1,0 +1,3 @@
+echo a b c >> x
+echo d >> x
+cat x

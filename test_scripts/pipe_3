@@ -1,0 +1,5 @@
+echo aaa > x
+echo b >> x
+echo baca >> x
+#cat x | grep a
+cat x|grep a|grep b

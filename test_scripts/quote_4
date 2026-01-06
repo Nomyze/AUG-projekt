@@ -1,0 +1,2 @@
+echo x > "\"moj\" plik"
+cat "\"moj\" plik"

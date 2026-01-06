@@ -1,0 +1,4 @@
+echo Automaty > x
+echo i >> x
+echo Gramatyki >> x
+cat x | grep ma

@@ -1,0 +1,3 @@
+echo ab > x; echo cd>x
+echo ef >> x; cat x
+

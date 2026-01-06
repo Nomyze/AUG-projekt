@@ -1,0 +1,2 @@
+echo a > x; echo > x; echo b >> x; echo >> x; echo c >> x
+cat x
