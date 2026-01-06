@@ -1,4 +1,4 @@
-#echo 1 >x >y -- illegal echo 1 >x gives no input to reroute
+echo 1 >x >y
 echo 1 > x; cat x >> x; cat x
 echo 1 ; ; ; echo 2
 echo 1

@@ -1,0 +1,2 @@
+echo a > x
+cat x && cat y && cat x

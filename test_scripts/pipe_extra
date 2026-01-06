@@ -1,0 +1,11 @@
+echo a; echo b | grep b
+echo "===="
+grep x
+echo "===="
+echo a | echo b
+echo "===="
+echo a > x | grep a
+echo "===="
+echo a > x
+cat x | grep a >> x
+cat x

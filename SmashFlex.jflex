@@ -49,17 +49,13 @@ Argument_quote = \"(\\.|[^\"\\])*\"
 %%
 
 <YYINITIAL>{
-"echo"      { return symbol("echo", COMMAND, Constant.ECHO); }
-"wc"        { return symbol("wc", COMMAND, Constant.WC); }
-"cat"       { return symbol("cat", COMMAND, Constant.CAT); }
-"grep"      { return symbol("grep", COMMAND, Constant.GREP); }
-
 \|         { return symbol("pipe", PIPE); }
+"||"        { return symbol("doube-pipe", DPIPE); }
+"&&"        { return symbol("double-and", DAMP); }
 ">>"        { return symbol("double-greater-than sign", DGTSIGN); }
 ">"         { return symbol("greater-than sign", GTSIGN); }
 "\n"        { return symbol("break", BREAK); }
 ";"         { return symbol("break", BREAK); }
-\#.*\n     { return symbol("comment", COMMENT); }
 {Argument}  { return symbol("argument", ARG, yytext()); }
 "$?"        { return symbol("argument", ARG, yytext()); }
 {Argument_quote}  { return symbol("argument", ARG, yytext().substring(1, yytext().length() - 1).replace("\\\\", "\\").replace("\\\"", "\"")); }

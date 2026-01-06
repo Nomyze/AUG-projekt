@@ -1,43 +1,40 @@
 import java.util.*;
 import java_cup.runtime.*;
 
-terminal BREAK, COMMENT, GTSIGN, DGTSIGN, PIPE;
-terminal Constant COMMAND;
+terminal BREAK, GTSIGN, DGTSIGN, PIPE, DPIPE, DAMP;
 terminal String ARG, STRINGCONST;
 
-non terminal Program        program;
-non terminal List<Comm>     stmtlist;
-non terminal Comm           comm, stmt;
-non terminal List<String>   arglist;
+non terminal Node               program;
+non terminal ListNode           stmtlist;
+non terminal Node               pipeline;
+non terminal Node               comm, stmt;
+non terminal List<String>       arglist;
+non terminal List<RedirNode>    redirs;
 
 precedence left BREAK;
-precedence left PIPE;
 
-program ::= stmtlist:sl                         {: RESULT = new Program(sl); :}
+start with program;
+
+program ::= stmtlist:sl                         {: RESULT = sl; :}
     ;
 
-stmtlist    ::= stmt:s
-    | stmtlist:sl BREAK stmt:s    {: sl.add(s); RESULT = sl; :}
-    |                                       {: RESULT = new LinkedList<Comm>(); :}
+stmtlist    ::= stmt:s                          {: RESULT = new ListNode(new ArrayList<>()); RESULT.nodes.add(s); :}
+    | stmtlist:sl BREAK stmt:s                  {: sl.nodes.add(s); RESULT = sl; :}
+    | stmtlist:sl BREAK                         {: RESULT = sl; :}
     ;
-//stmt        ::= BREAK                                       {: /* nic */ :}
-//    | comm:c PIPE stmt:s                    {: RESULT = s; RESULT.setInput(c.doTheThing()); System.out.print(RESULT.doTheThing()); :}
-//    | comm:c BREAK                          {: RESULT = c; System.out.print(RESULT.doTheThing()); :}
-//    | comm:c GTSIGN ARG:a BREAK             {: RESULT = c; c.setMode(0); c.setFile(a); System.out.print(RESULT.doTheThing()); :}
-//    | comm:c DGTSIGN ARG:a BREAK            {: RESULT = c; c.setMode(1); c.setFile(a); System.out.print(RESULT.doTheThing()); :}
-//    | COMMENT                                               {: :}
-//    ;
-stmt        ::= pipeline
+stmt        ::= pipeline:p                      {: RESULT = p; :}
     ;
-pipeline    ::= comm:c
-    | pipeline:p PIPE comm:c
+pipeline    ::= comm:c                          {: RESULT = c; :}
+    | pipeline:p PIPE comm:c                    {: RESULT = new PipeNode(p, c); :}
+    | pipeline:p DPIPE comm:c                   {: RESULT = new ErrCondNode(2, p, c); :}
+    | pipeline:p DAMP comm:c                    {: RESULT = new ErrCondNode(1, p, c); :}
     ;
-comm        ::= COMMAND:cmd arglist:al redirs     {: RESULT = new Comm(cmd, al); :}
-    | COMMENT                                   {: :}
+comm        ::= arglist:al redirs:r             {: RESULT = new CommNode(al, r); :}
     ;
-arglist     ::= arglist:al ARG:argument     {: al.add(argument); RESULT = al; :}
-    |                                       {: RESULT = new LinkedList<String>(); :}
+arglist     ::= ARG:a                           {: RESULT = new LinkedList<String>(); RESULT.add(a); :}
+    | arglist:al ARG:argument                   {: al.add(argument); RESULT = al; :}
     ;
-redirs ::=
-    | redirs GTSIGN ARG:a
-    | redirs DGTSIGN ARG:a
+redirs ::=                                      {: RESULT = new ArrayList<RedirNode>(); :}
+    | redirs:r GTSIGN ARG:a                     {: r.add(new RedirNode(1, a)); RESULT = r; :}
+    | redirs:r DGTSIGN ARG:a                    {: r.add(new RedirNode(2, a)); RESULT = r; :}
+    ;

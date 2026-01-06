@@ -1,0 +1,13 @@
+cat x && echo a; echo b
+echo "===="
+cat x && cat x || echo a
+echo "===="
+echo a || echo a && cat x
+echo "===="
+echo a || echo b > x
+echo c
+cat x
+echo "===="
+echo a && echo b | wc
+echo "===="
+echo a; echo b | wc && grep a | wc
