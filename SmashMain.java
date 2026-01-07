@@ -18,13 +18,52 @@ class SmashMain {
                 System.err.println("Failed execution");
             }
         } else {
-            p = new parser(new ScannerBuffer(new Lexer(new BufferedReader(new InputStreamReader(System.in)), sf)), sf);
-            try {
-                Node ast = (Node)p.parse().value;
-                ast.execute(shell);
-            } catch(Exception e) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            //p = new parser(new ScannerBuffer(new Lexer(new BufferedReader(new InputStreamReader(System.in)), sf)), sf);
+            while(true) {
+                String input = readCommand(in);
+                if(input == null) 
+                    break;
+                try {
+                    Lexer l = new Lexer(new BufferedReader(new StringReader(input)), sf);
+                    p = new parser(l, sf);
+                    Node ast = (Node)p.parse().value;
+                    ast.execute(shell);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 	}
+
+    static String readCommand(BufferedReader in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        boolean multiline = false;
+
+        while(true) {
+            System.out.print(!multiline ? "$ " : "> ");
+            String line;
+            line = in.readLine();
+            if(line == null) return null;
+
+            sb.append(line).append("\n");
+
+            if(isComplete(sb.toString())) {
+                return sb.toString();
+            }
+            multiline = true;
+        }
+    }
+    static boolean isComplete(String s) {
+        int quotes = 0;
+        char last = '\0';
+        for(char c : s.toCharArray()) {
+            if(c == '"' && last != '\\') {
+                quotes += 1;
+            }
+            last = c;
+        }
+        return quotes % 2 == 0;
+    }
 }
 

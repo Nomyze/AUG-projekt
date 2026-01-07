@@ -41,8 +41,9 @@ import java_cup.runtime.ComplexSymbolFactory.*;
     return symbolFactory.newSymbol("EOF", EOF, new Location(yyline+1, yycolumn+1,(int)yychar), new Location(yyline+1, yycolumn+1, (int)yychar+1));
 %eofval}
 
-Argument = [0-9a-zA-Z.\-_]+
+Argument = [0-9a-zA-Z.\-_=]+
 Argument_quote = \"(\\.|[^\"\\])*\"
+Variable = [a-zA-Z_][a-zA-Z0-9_]*
 
 %state STRING
 
@@ -56,6 +57,9 @@ Argument_quote = \"(\\.|[^\"\\])*\"
 ">"         { return symbol("greater-than sign", GTSIGN); }
 "\n"        { return symbol("break", BREAK); }
 ";"         { return symbol("break", BREAK); }
+{Variable}=\$?{Argument}   { return symbol("variable assignment", VARASIGN, yytext()); }
+{Variable}={Argument_quote}   { return symbol("variable assignment", VARASIGN, yytext()); }
+\${Variable} { return symbol("variable usage", ARG, yytext()); }
 {Argument}  { return symbol("argument", ARG, yytext()); }
 "$?"        { return symbol("argument", ARG, yytext()); }
 {Argument_quote}  { return symbol("argument", ARG, yytext().substring(1, yytext().length() - 1).replace("\\\\", "\\").replace("\\\"", "\"")); }

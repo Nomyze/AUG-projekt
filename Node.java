@@ -18,6 +18,7 @@ class CommNode extends Node {
     void execute(SmashShell shell) throws Exception {
         String out = shell.execute(comm, args);
         for(RedirNode r : redirs) {
+            r.filename = shell.vars.getOrDefault(r.filename, r.filename);
             if(r.type == 1) {
                 shell.fs.put(r.filename, out);
             } else if(r.type == 2) {
@@ -64,7 +65,7 @@ class ErrCondNode extends Node {
 
     void execute(SmashShell shell) throws Exception {
         left.execute(shell);
-        if((on_succ && !shell.error) || (!on_succ && shell.error)){
+        if((on_succ && !shell.error()) || (!on_succ && shell.error())){
             right.execute(shell);
         }
     }

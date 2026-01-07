@@ -1,0 +1,9 @@
+a=x > y
+echo "==="
+a=b=x; echo $a; echo $b; echo $x;
+echo "==="
+a=x; a=$a; echo $a;
+echo "==="
+a=x; b=$a; a=$b; echo $a; echo $b
+echo "==="
+a=echo; b=abc; $a $b

@@ -2,7 +2,7 @@ import java.util.*;
 import java_cup.runtime.*;
 
 terminal BREAK, GTSIGN, DGTSIGN, PIPE, DPIPE, DAMP;
-terminal String ARG, STRINGCONST;
+terminal String ARG, STRINGCONST, VARASIGN;
 
 non terminal Node               program;
 non terminal ListNode           stmtlist;
@@ -33,6 +33,8 @@ comm        ::= arglist:al redirs:r             {: RESULT = new CommNode(al, r);
     ;
 arglist     ::= ARG:a                           {: RESULT = new LinkedList<String>(); RESULT.add(a); :}
     | arglist:al ARG:argument                   {: al.add(argument); RESULT = al; :}
+    | VARASIGN:v                                {: RESULT = new LinkedList<String>(); RESULT.add(v); :}
+    | arglist:al VARASIGN:v                     {: al.add(v); RESULT = al; :}
     ;
 redirs ::=                                      {: RESULT = new ArrayList<RedirNode>(); :}
     | redirs:r GTSIGN ARG:a                     {: r.add(new RedirNode(1, a)); RESULT = r; :}
